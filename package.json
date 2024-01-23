@@ -1,19 +1,25 @@
 {
-    "name": "cargajira",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {},
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "devDependencies": {
-      "@playwright/test": "^1.41.0",
-      "@types/node": "^20.11.4"
-    },
-    "dependencies": {
-      "@types/xlsx": "^0.0.36",
-      "xlsx": "^0.18.5"
-    }
+  "name": "cargajira",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000R\u0000e\u0000g\u0000i\u0000s\u0000t\u0000r\u0000o\u0000J\u0000i\u0000r\u0000a\u0000\r\u0000 \u0000",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.41.1",
+    "@types/node": "^20.11.4",
+    "pkg": "^5.8.1",
+    "playwright": "^1.41.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@types/xlsx": "^0.0.36",
+    "exceljs": "^4.4.0",
+    "xlsx": "^0.18.5"
+  },
+  "scripts" :{
+    "package": "pkg test-results/index.js --output .bin/myEjecutable --target node14-win-x64"
   }
-  
+}
