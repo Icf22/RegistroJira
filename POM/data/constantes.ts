@@ -3,7 +3,9 @@ export const URL= {
 }
 
 export const RUTAS = {
-    matriz : './resources/MatrizDeEjecucion.xlsx'
+    matriz : './resources/MatrizDeEjecucion.xlsx',
+    matriz2 : './resources/MatrizDeEjecucion2.xlsx'
+
  }
 export const CREDENTIALS = {
  CORREO : 'icarrazco@eglobal.com.mx',
