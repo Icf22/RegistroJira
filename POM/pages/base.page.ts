@@ -22,7 +22,6 @@ export class BasePage{
 
   async iniciarSesison(pestania: string){ 
     const testCase = await this.obtenerTestCase(pestania);  // await this.obtenerTestCase(pestania).then((valor: string) => valor);
-    console.log(testCase)
     await this.page.goto('https://e-global.atlassian.net/browse/'+testCase); //esto no está bien
     await this.btnIniciarSesion.fill(CREDENTIALS.CORREO);
     await this.btnContinue.click();
