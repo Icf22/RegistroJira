@@ -25,7 +25,7 @@ export class TestPlan extends BasePage {
 
     }
 
-    async registrarMatriz(hoja_excell: string) {
+    async registrarMatriz(hoja_excell: string, fila: number) {
         try {
             type FilaExcel = Array<number | string | Date | boolean | null | undefined>;
             const filePath = RUTAS.matriz;
@@ -48,9 +48,8 @@ export class TestPlan extends BasePage {
                     conteoFilas++;
                 }
             });
-
             //SE DECLARA EL CONTEO DE FILAS EN EL AMBITO BASADO EN 1
-            for (let i = 16; i <= (conteoFilas +1); i++) {
+            for (let i = fila; i <= (conteoFilas +2); i++) {
                 try {
                     let nombrePrueba = worksheet['E' + i]?.w || '';
                     let precondiciones = worksheet['F' + i]?.w || '';
