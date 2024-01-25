@@ -25,12 +25,12 @@ export class TestPlan extends BasePage {
 
     }
 
-    async registrarMatriz() {
+    async registrarMatriz(hoja_excell: string) {
         try {
             type FilaExcel = Array<number | string | Date | boolean | null | undefined>;
             const filePath = RUTAS.matriz;
             const workbook = XLSX.readFile(filePath);
-            const nameSheet = 'FUNCIONAL POSITIVO'
+            const nameSheet = hoja_excell;
             const worksheet = workbook.Sheets[nameSheet];
 
             //SE OBTIENE EL RANGO DE CELDAS DE LA HOJA
@@ -68,5 +68,7 @@ export class TestPlan extends BasePage {
             console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++' + error);
         }
     }
+
+       
 
 }
