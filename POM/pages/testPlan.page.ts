@@ -33,23 +33,24 @@ export class TestPlan extends BasePage {
             const nameSheet = hoja_excell;
             const worksheet = workbook.Sheets[nameSheet];
 
-            //SE OBTIENE EL RANGO DE CELDAS DE LA HOJA
-            const rangoCeldas = worksheet['!ref'] || 'A1:A1';
-            const { s, e } = XLSX.utils.decode_range(rangoCeldas);
-            
-            //SE DECLARA LA VARIBLE PARA ASIGNARLE EL VALOR
-            let conteoFilas = 0;
+            // CONVIERTE LA HOJA DE EXCEL EN UN ARREGLO any[][] ESTO INDICA QUE ES UN ARREGLO DE CUALQUIER TIPO DE DATO Y POR ESO MISMO TRAE TODO EL RANGO DE FILAS
+            const data: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-            //CON EL FOREACH PASA POR CADA UNA DE LOS VALORES POR FILA TOMANDO EN CUENTA LAS CONBINADAS Y DETECTA SI HAY VALORES EN TODA ESA FILA
-            const filas: FilaExcel[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-            filas.forEach((fila) => {
-                //VERIFICA SI LA FILA TIENE AL MENOS UNA CELDA CON UN VALOR
-                if (fila.some((valor) => valor !== null && valor !== undefined)) {
-                    conteoFilas++;
+            //SE DECLARA LA VARIABLE EN -1 PARA INDICAR QUE NO HAY FILAS CON DATOS
+            let ultimaFila = -1;
+
+            //LO HACE A LA INVERSA PARA ENCONTRAR LA ULTIMA LINEA OCUPADA POR INFORMACION
+            for (let i = data.length - 1; i >= 0; i--) {
+                const fila = data[i];
+                //VALIDA QUE LA FILA TENGA ALMENOS UN DATO EN SUS CELDAS
+                if (fila.some(celda => celda !== undefined && celda !== '')) {
+                    ultimaFila = i + 1; //SE CONVIERTE EN AMBITO BASADO EN 1
+                    break; //TERMINA EL BUCLE
                 }
-            });
-            //SE DECLARA EL CONTEO DE FILAS EN EL AMBITO BASADO EN 1
-            for (let i = fila; i <= (conteoFilas +2); i++) {
+            }
+
+            //SE DECLARA EL CONTEO DESDE LA ULTIMA FILA PARA DETERMINAR EL ULTIMO DATO A REGISTRAR
+            for (let i = fila; i <= ultimaFila; i++) {
                 try {
                     let nombrePrueba = worksheet['E' + i]?.w || '';
                     let precondiciones = worksheet['F' + i]?.w || '';
