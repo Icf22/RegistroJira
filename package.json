@@ -19,7 +19,11 @@
     "exceljs": "^4.4.0",
     "xlsx": "^0.18.5"
   },
-  "scripts" :{
-    "package": "pkg test-results/index.js --output .bin/myEjecutable --target node14-win-x64"
+  "scripts": {
+    "package": "pkg test-results/index.js --output .bin/myEjecutable --target node14-win-x64",
+    "flow:funcionalPositivo": "npx playwright test cargarJira.spec.ts -g funcionalPositivo --headed",
+    "flow:funcionalNegativo": "npx playwright test cargarJira.spec.ts -g funcionalNegativo --headed",
+    "flow:excepcion": "npx playwright test cargarJira.spec.ts -g excepcion --headed",
+    "flow:noAfectacion": "npx playwright test cargarJira.spec.ts -g noAfectacion --headed"
   }
 }
