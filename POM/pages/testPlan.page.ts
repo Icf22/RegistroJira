@@ -12,7 +12,6 @@ export class TestPlan extends BasePage {
     testResult: Locator;
     addSteps: Locator;
 
-
     constructor(page: Page) {
         super(page);
         this.testStep = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two-7698253642720034326__')]").locator('#zs-field-step--1')
@@ -22,7 +21,6 @@ export class TestPlan extends BasePage {
         this.txtBusqueda = page.locator('[data-test-id="search-dialog-input"]');
         this.page_carga = page.getByTestId('issue.views.issue-base.foundation.breadcrumbs.project.item')
         this.btnAdd = page.getByTitle('Add Steps').getByRole('img');
-
     }
 
     async registrarMatriz(hoja_excell: string, fila: number) {
@@ -49,26 +47,41 @@ export class TestPlan extends BasePage {
                 }
             }
 
-            //SE DECLARA EL CONTEO DESDE LA ULTIMA FILA PARA DETERMINAR EL ULTIMO DATO A REGISTRAR
-            for (let i = fila; i <= ultimaFila; i++) {
-                try {
-                    let nombrePrueba = worksheet['E' + i]?.w || '';
-                    let precondiciones = worksheet['F' + i]?.w || '';
-                    let script = worksheet['H' + i]?.w || '';
-                    await this.testStep.fill(script);
-                    await this.testData.fill(nombrePrueba);
-                    await this.testResult.fill(precondiciones);
-                    await this.addSteps.click();
+            //OBJETO PARA CREAR ARREGLO CON VARIOS PARAMETROS
+            interface Dato {
+                nombrePrueba: string;
+                precondiciones: string;
+                script: string;
+            }
 
-                } catch (error) {
-                    console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++' + error);
-                }
+            //ARREGLO PARA ALMACENAR LOS DATOS
+            const datos: Dato[] = [];
+
+            //CARGA LOS DATOS EN LA VARIABLE DATOS
+            for (let i = fila; i <= ultimaFila; i++) {
+                const nombrePrueba: string = worksheet['E' + i]?.w;
+                const precondiciones: string = worksheet['F' + i]?.w;
+                const script: string = worksheet['H' + i]?.w;
+                datos.push({ nombrePrueba, precondiciones, script });
+            }
+
+            //FUNCION DONDE LLENA LOS CAMPOS
+            const LlenarCampos = async (dato: Dato) => {
+                const { nombrePrueba, precondiciones, script } = dato;
+                await this.testStep.fill(script);
+                await this.testData.fill(nombrePrueba);
+                await this.testResult.fill(precondiciones);
+                await this.addSteps.click();
+            };
+
+            //LLAMA LA FUNCION PARA LLENAR LOS DATOS, DESPUES DE LLENAR UNO, DA UN TIEMPO DE ESPERA A QUE SE REGISTRE EL DATO ANTERIOR PARA QUE NO REGISTRE DATOS EN BLANCO
+            const tiempoEspera = 1500;
+            for (const dato of datos) {
+                await LlenarCampos(dato);
+                await new Promise(resolve => setTimeout(resolve, tiempoEspera));
             }
         } catch (error) {
             console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++' + error);
         }
     }
-
-       
-
 }
