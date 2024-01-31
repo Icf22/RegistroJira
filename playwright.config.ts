@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { off } from 'process';
 
 /**
  * Read environment variables from file.
@@ -27,9 +28,14 @@ export default defineConfig({
     // baseURL: 'http://127.0.0.1:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    actionTimeout: 300000,
+    headless: true,
+    trace: "retain-on-failure",
+    screenshot: "off",
+    video: "on"
   },
-
+  globalTimeout: 5000000,
+  timeout: 9000000,
   /* Configure projects for major browsers */
   projects: [
     {
