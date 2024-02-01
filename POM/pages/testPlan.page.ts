@@ -11,10 +11,11 @@ export class TestPlan extends BasePage {
     testData: Locator;
     testResult: Locator;
     addSteps: Locator;
-
+    btnDelete: Locator;
 
     constructor(page: Page) {
         super(page);
+        this.btnDelete = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two-7698253642720034326__')]").locator("//div[@title='Delete']")
         this.testStep = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two-7698253642720034326__')]").locator('#zs-field-step--1')
         this.testData = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two-7698253642720034326__')]").locator('#zs-field-data--1')
         this.testResult = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two-7698253642720034326__')]").locator('#zs-field-result--1')
@@ -22,7 +23,6 @@ export class TestPlan extends BasePage {
         this.txtBusqueda = page.locator('[data-test-id="search-dialog-input"]');
         this.page_carga = page.getByTestId('issue.views.issue-base.foundation.breadcrumbs.project.item')
         this.btnAdd = page.getByTitle('Add Steps').getByRole('img');
-
     }
 
     async registrarMatriz(hoja_excell: string, fila: number) {
@@ -48,27 +48,61 @@ export class TestPlan extends BasePage {
                     break; //TERMINA EL BUCLE
                 }
             }
-
-            //SE DECLARA EL CONTEO DESDE LA ULTIMA FILA PARA DETERMINAR EL ULTIMO DATO A REGISTRAR
-            for (let i = fila; i <= ultimaFila; i++) {
-                try {
-                    let nombrePrueba = worksheet['E' + i]?.w || '';
-                    let precondiciones = worksheet['F' + i]?.w || '';
-                    let script = worksheet['H' + i]?.w || '';
-                    await this.testStep.fill(script);
-                    await this.testData.fill(nombrePrueba);
-                    await this.testResult.fill(precondiciones);
-                    await this.addSteps.click();
-
-                } catch (error) {
-                    console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++' + error);
-                }
+            //OBJETO PARA CREAR ARREGLO CON VARIOS PARAMETROS
+            interface Dato {
+                nombrePrueba: string;
+                precondiciones: string;
+                script: string;
             }
+            //ARREGLO PARA ALMACENAR LOS DATOS
+            const datos: Dato[] = [];
+
+            //CARGA LOS DATOS EN LA VARIABLE DATOS
+            for (let i = fila; i <= ultimaFila; i++) {
+                const nombrePrueba: string = worksheet['E' + i]?.w;
+                const precondiciones: string = worksheet['F' + i]?.w;
+                const script: string = worksheet['H' + i]?.w;
+                datos.push({ nombrePrueba, precondiciones, script });
+            }
+            
+            //FUNCION DONDE LLENA LOS CAMPOS
+            const LlenarCampos = async (dato: Dato) => {
+                const { nombrePrueba, precondiciones, script } = dato;
+
+                await this.testStep.fill(script);
+                await this.testData.fill(nombrePrueba);
+                await this.testResult.fill(precondiciones);
+                await this.addSteps.click();
+            };
+            //LLAMA LA FUNCION PARA LLENAR LOS DATOS, DESPUES DE LLENAR UNO, DA UN TIEMPO DE ESPERA A QUE SE REGISTRE EL DATO ANTERIOR PARA QUE NO REGISTRE DATOS EN BLANCO
+              //const frame = this.page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two-7698253642720034326__')]");
+              //await frame.waitForLoadState('networkidle');
+              await this.testData.click();
+              const registros_iniciales =  await this.obtenerRegistros();
+              console.log("Numero de registros encontrados antes de iniciar el proceso son:" + " " + registros_iniciales)
+         
+           const tiempoEspera = 1500;
+            for (const dato of datos) {
+                await LlenarCampos(dato);
+                await new Promise(resolve => setTimeout(resolve, tiempoEspera));
+            }
+            const registros_finales =  await this.obtenerRegistros();
+            console.log("Numero de registros encontrados al final del proceso son:" + " " + registros_finales)
         } catch (error) {
             console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++' + error);
         }
     }
 
-       
-
+    async obtenerRegistros() {
+        try {
+          const btnDeleteElements = await this.btnDelete.all();
+          return btnDeleteElements.length;
+        } catch (error) {
+          await this.handleError(
+            "Ocurrió un error al obtener el número de registros:",
+            error
+          );
+          throw error;
+        }
+      }
 }
