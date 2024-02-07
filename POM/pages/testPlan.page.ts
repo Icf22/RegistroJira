@@ -96,14 +96,7 @@ export class TestPlan extends BasePage {
     async obtenerRegistros() {
         try {
             //ESPERA A QUE EL ELEMENTO FRAME CARGUE
-            const frame = await this.page.waitForSelector("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two-7698253642720034326__')]");
-            
-            //CUANDO EL FRAME CARGA NO PRECISAMENTE CARGA SU CONTENIDO
-            //ENTRAMOS AL CONTENIDO DEL FRAME
-            const frameContent = await frame.contentFrame();
-            //DAMOS TIEMPO DE ESPERA A QUE CARGUE EL ELEMENTO QUE NECESITAMOS
-            const elementInsideFrame = await frameContent?.waitForSelector("//div[@title='Delete']");
-            
+            const frameContent = await this.EsperarFrame(); 
             const btnDeleteElements = await this.btnDelete.all();
             return btnDeleteElements.length;
         } catch (error) {
@@ -113,5 +106,41 @@ export class TestPlan extends BasePage {
             );
             throw error;
         }
+    }
+
+    async EsperarFrame(){
+        const frame = await this.page.waitForSelector("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two-7698253642720034326__')]");
+        const frameContent = await frame.contentFrame();
+        //PARA OBTENER SIEMPRE EL FRAMECONTENT, CASO CONTRARIO QUE ENVÍE NULO
+        if (!frameContent) {
+            console.error('El contenido del frame no se pudo obtener.');
+            return null;
+        }
+
+        //VALIDA QUE EXISTAN DATOS, SI DESPUES DE 10 SEGUNDOS NO ENCUENTRA NADA SIGUE EL PROCESO
+        let elementInsideFrame; 
+        try{elementInsideFrame = await frameContent.waitForSelector("//div[@title='Delete']", { timeout: 10000 });}
+        catch(error){return frameContent;}
+
+        return frameContent;
+    }
+
+    async eliminarRegistros(nombrePrueba: String) {
+        const frameContent = await this.EsperarFrame();
+        const tiempoEspera = 1000;
+        let btnDeleteElement = await frameContent?.$('//div[@title="Delete"]');
+        let contEliminados = 0;
+        while (btnDeleteElement) {
+            await btnDeleteElement.click();
+            const btnDeleteElementDelete = await frameContent?.$('button[type="button"].ak-button.ak-button__appearance-primary');
+            btnDeleteElementDelete?.click();
+            await frameContent?.waitForTimeout(tiempoEspera);
+            // Vuelve a buscar el botón de eliminar después de hacer clic en uno
+            btnDeleteElement = await frameContent?.$('//div[@title="Delete"]');
+            contEliminados++;
+        }
+        contEliminados == 1 ? 
+        console.log(`Se eliminó ${contEliminados} registro del test case ${nombrePrueba}`) : 
+        console.log(`Se eliminaron ${contEliminados} registros del test case ${nombrePrueba}`);
     }
 }
