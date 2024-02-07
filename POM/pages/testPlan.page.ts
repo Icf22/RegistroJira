@@ -64,7 +64,7 @@ export class TestPlan extends BasePage {
                 const script: string = worksheet['H' + i]?.w;
                 datos.push({ nombrePrueba, precondiciones, script });
             }
-            
+
             //FUNCION DONDE LLENA LOS CAMPOS
             const LlenarCampos = async (dato: Dato) => {
                 const { nombrePrueba, precondiciones, script } = dato;
@@ -75,18 +75,18 @@ export class TestPlan extends BasePage {
                 await this.addSteps.click();
             };
             //LLAMA LA FUNCION PARA LLENAR LOS DATOS, DESPUES DE LLENAR UNO, DA UN TIEMPO DE ESPERA A QUE SE REGISTRE EL DATO ANTERIOR PARA QUE NO REGISTRE DATOS EN BLANCO
-              //const frame = this.page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two-7698253642720034326__')]");
-              //await frame.waitForLoadState('networkidle');
-              await this.testData.click();
-              const registros_iniciales =  await this.obtenerRegistros();
-              console.log("Numero de registros encontrados antes de iniciar el proceso son:" + " " + registros_iniciales)
-         
-           const tiempoEspera = 1500;
+            //const frame = this.page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two-7698253642720034326__')]");
+            //await frame.waitForLoadState('networkidle');
+            //await this.testData.click();
+            const registros_iniciales = await this.obtenerRegistros();
+            console.log("Numero de registros encontrados antes de iniciar el proceso son:" + " " + registros_iniciales)
+
+            const tiempoEspera = 1500;
             for (const dato of datos) {
                 await LlenarCampos(dato);
                 await new Promise(resolve => setTimeout(resolve, tiempoEspera));
             }
-            const registros_finales =  await this.obtenerRegistros();
+            const registros_finales = await this.obtenerRegistros();
             console.log("Numero de registros encontrados al final del proceso son:" + " " + registros_finales)
         } catch (error) {
             console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++' + error);
@@ -95,14 +95,23 @@ export class TestPlan extends BasePage {
 
     async obtenerRegistros() {
         try {
-          const btnDeleteElements = await this.btnDelete.all();
-          return btnDeleteElements.length;
+            //ESPERA A QUE EL ELEMENTO FRAME CARGUE
+            const frame = await this.page.waitForSelector("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two-7698253642720034326__')]");
+            
+            //CUANDO EL FRAME CARGA NO PRECISAMENTE CARGA SU CONTENIDO
+            //ENTRAMOS AL CONTENIDO DEL FRAME
+            const frameContent = await frame.contentFrame();
+            //DAMOS TIEMPO DE ESPERA A QUE CARGUE EL ELEMENTO QUE NECESITAMOS
+            const elementInsideFrame = await frameContent?.waitForSelector("//div[@title='Delete']");
+            
+            const btnDeleteElements = await this.btnDelete.all();
+            return btnDeleteElements.length;
         } catch (error) {
-          await this.handleError(
-            "Ocurrió un error al obtener el número de registros:",
-            error
-          );
-          throw error;
+            await this.handleError(
+                "Ocurrió un error al obtener el número de registros:",
+                error
+            );
+            throw error;
         }
-      }
+    }
 }
