@@ -21,9 +21,9 @@
   },
   "scripts": {
     "package": "pkg test-results/index.js --output .bin/myEjecutable --target node14-win-x64",
-    "flow:funcionalPositivo": "npx playwright test cargarJira.spec.ts -g funcionalPositivo --headed",
-    "flow:funcionalNegativo": "npx playwright test cargarJira.spec.ts -g funcionalNegativo --headed",
-    "flow:excepcion": "npx playwright test cargarJira.spec.ts -g excepcion --headed",
-    "flow:noAfectacion": "npx playwright test cargarJira.spec.ts -g noAfectacion --headed"
+    "flow:funcionalPositivo": "npx playwright test cargarJira.spec.ts -g funcionalPositivo",
+    "flow:funcionalNegativo": "npx playwright test cargarJira.spec.ts -g funcionalNegativo",
+    "flow:excepcion": "npx playwright test cargarJira.spec.ts -g excepcion",
+    "flow:noAfectacion": "npx playwright test cargarJira.spec.ts -g noAfectacion"
   }
 }

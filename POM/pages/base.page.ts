@@ -42,8 +42,6 @@ export class BasePage{
 
   async handleError(message: string, error: any) {
     console.error(message, error);
-    //await this.cerrarSesion();
-    //await this.cerrarNavegador();
   }
 
 }
