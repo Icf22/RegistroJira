@@ -3,5 +3,6 @@ export const URL= {
 }
 
 export const RUTAS = {
-    matriz : './resources/MatrizDeEjecucion.xlsx'
+    matriz : 'C:\\InsumoCargaJira\\MatrizDeEjecucion.xlsx',
+    matrizPruebas : './resources/MatrizDeEjecucion.xlsx'
  }
