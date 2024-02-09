@@ -5,7 +5,7 @@ import {TestPlan} from "../pages/testPlan.page"
 // Comando para ejecutar funcional Positivo:
 //! npm run flow:funcionalPositivo
 test.use({ignoreHTTPSErrors: true});
-test('funcionalPositivo', async ({page}) => {
+test.only('funcionalPositivo', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
     await basePage.iniciarSesison('FUNCIONAL POSITIVO');

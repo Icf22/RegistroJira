@@ -79,15 +79,17 @@ export class TestPlan extends BasePage {
             //await frame.waitForLoadState('networkidle');
             //await this.testData.click();
             const registros_iniciales = await this.obtenerRegistros();
-            console.log("Numero de registros encontrados antes de iniciar el proceso son:" + " " + registros_iniciales)
-
+            console.log("Casos actuales en jira para los registros tipo"+ " " + hoja_excell + ": " + registros_iniciales)
+            console.log("Casos para registrar disponibles en la matriz:" + " " + (ultimaFila - fila + 1 ))
             const tiempoEspera = 1500;
             for (const dato of datos) {
                 await LlenarCampos(dato);
                 await new Promise(resolve => setTimeout(resolve, tiempoEspera));
             }
             const registros_finales = await this.obtenerRegistros();
-            console.log("Numero de registros encontrados al final del proceso son:" + " " + registros_finales)
+            console.log("Casos procesados/cargados en jira para el tipo " + hoja_excell + " " +  "son" + " " + (registros_finales-registros_iniciales))
+            console.log("Total de casos registrados en jira para el test case tipo " +" " + hoja_excell + " " + registros_finales);
+            
         } catch (error) {
             console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++' + error);
         }

@@ -3,11 +3,5 @@ export const URL= {
 }
 
 export const RUTAS = {
-    matriz : './resources/MatrizDeEjecucion.xlsx',
-    matriz2 : './resources/MatrizDeEjecucion2.xlsx'
-
+    matriz : './resources/MatrizDeEjecucion.xlsx'
  }
-export const CREDENTIALS = {
- CORREO : 'icarrazco@eglobal.com.mx',
- PASSWORD: 'Temporal2024*'
-}

@@ -1,5 +1,6 @@
 import { Locator, Page } from "@playwright/test";
-import {URL, CREDENTIALS} from "../data/constantes"
+import {URL} from "../data/constantes"
+import {CREDENTIALS} from "../data/credenciales"
 import * as XLSX from 'xlsx';
 import { RUTAS } from "../data/constantes";
 
@@ -21,7 +22,7 @@ export class BasePage{
     }
 
   async iniciarSesison(pestania: string){ 
-    const testCase = await this.obtenerTestCase(pestania);  // await this.obtenerTestCase(pestania).then((valor: string) => valor);
+    const   testCase = await this.obtenerTestCase(pestania);  // await this.obtenerTestCase(pestania).then((valor: string) => valor);
     await this.page.goto('https://e-global.atlassian.net/browse/'+testCase); //esto no está bien
     await this.btnIniciarSesion.fill(CREDENTIALS.CORREO);
     await this.btnContinue.click();
@@ -35,7 +36,7 @@ export class BasePage{
     const workbook = XLSX.readFile(filePath);
     const nameSheet = pestania;
     const worksheet = workbook.Sheets[nameSheet];
-    const test_case = worksheet['B' + 5]?.w || '';
+    const test_case = worksheet['E' + 5]?.w || '';
     return test_case;
   } 
 
