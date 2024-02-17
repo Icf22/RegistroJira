@@ -9,8 +9,8 @@ test.only('funcionalPositivo', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
     await basePage.iniciarSesison('FUNCIONAL POSITIVO');
-    //await testPlan.eliminarRegistros('FUNCIONAL NEGATIVO');
-    await testPlan.registrarMatriz('FUNCIONAL POSITIVO', 16);
+    await testPlan.eliminarRegistros('FUNCIONAL POSITIVO');
+    //await testPlan.registrarMatriz('FUNCIONAL POSITIVO', 16);
 })
 
 // Comando para ejecutar funcional Negativo:
