@@ -59,9 +59,9 @@ export class TestPlan extends BasePage {
 
             //CARGA LOS DATOS EN LA VARIABLE DATOS
             for (let i = fila; i <= ultimaFila; i++) {
-                const nombrePrueba: string = worksheet['E' + i]?.w;
+                const nombrePrueba: string = worksheet['H' + i]?.w;
                 const precondiciones: string = worksheet['F' + i]?.w;
-                const script: string = worksheet['H' + i]?.w;
+                const script: string = worksheet['I' + i]?.w;
                 datos.push({ nombrePrueba, precondiciones, script });
             }
 
@@ -69,9 +69,9 @@ export class TestPlan extends BasePage {
             const LlenarCampos = async (dato: Dato) => {
                 const { nombrePrueba, precondiciones, script } = dato;
 
-                await this.testStep.fill(script);
-                await this.testData.fill(nombrePrueba);
-                await this.testResult.fill(precondiciones);
+                await this.testStep.fill(nombrePrueba);
+                await this.testData.fill(precondiciones);
+                await this.testResult.fill(script);
                 await this.addSteps.click();
             };
             //LLAMA LA FUNCION PARA LLENAR LOS DATOS, DESPUES DE LLENAR UNO, DA UN TIEMPO DE ESPERA A QUE SE REGISTRE EL DATO ANTERIOR PARA QUE NO REGISTRE DATOS EN BLANCO
@@ -83,7 +83,7 @@ export class TestPlan extends BasePage {
             console.log("Casos actuales en jira para los registros tipo"+ " " + hoja_excell + ": " + registros_iniciales)
             console.log("Casos para registrar disponibles en la matriz:" + " " + (ultimaFila - fila + 1 ) + '\n')
             const tiempoEspera = 1500;
-            var count = registros_iniciales + 1;
+            var count =  1;
             for (const dato of datos) {
                 console.log(`Cargando dato ${count}...`)
                 await LlenarCampos(dato);
@@ -95,7 +95,7 @@ export class TestPlan extends BasePage {
             }
             const registros_finales = await this.obtenerRegistros();
             console.log("Casos procesados/cargados en jira para el tipo " + hoja_excell + " " +  "son" + " " + (registros_finales-registros_iniciales))
-            console.log("Total de casos registrados en jira para el test case tipo " +" " + hoja_excell + " " + (registros_finales + 1));
+            console.log("Total de casos registrados en jira para el test case tipo " +" " + hoja_excell + " " + (registros_finales));
             console.log(`************************************************************************`);
         } catch (error) {
             console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++' + error);
