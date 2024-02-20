@@ -139,7 +139,7 @@ export class TestPlan extends BasePage {
         const tiempoEspera = 1000;
         let btnDeleteElement = await frameContent?.$('//div[@title="Delete"]');
         let btnDeleteElementTotal = await frameContent?.$$('//div[@title="Delete"]');
-        let cantidadTotal = btnDeleteElementTotal?.length != null ? btnDeleteElementTotal?.length + 1 : btnDeleteElementTotal?.length;
+        let cantidadTotal = btnDeleteElementTotal?.length != null ? btnDeleteElementTotal?.length /*+ 1*/ : btnDeleteElementTotal?.length;
         let contEliminados = 0;
         let count = 1;
         console.log(`\n************************** ELIMINANDO ${nombrePrueba} *****************************`)
