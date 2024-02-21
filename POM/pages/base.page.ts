@@ -28,6 +28,7 @@ export class BasePage{
     await this.btnContinue.click();
     await this.txtPassword.fill(CREDENTIALS.PASSWORD)
     await this.btnLogIn.click();
+    return testCase;
   }   
 
   async obtenerTestCase(pestania:string){

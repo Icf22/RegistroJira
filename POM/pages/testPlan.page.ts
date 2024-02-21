@@ -136,7 +136,7 @@ export class TestPlan extends BasePage {
         return frameContent;
     }
 
-    async eliminarRegistros(nombrePrueba: String) {
+    async eliminarRegistros(nombrePrueba: String, idJira: String) {
         const frameContent = await this.EsperarFrame();
         const tiempoEspera = 1000;
         let btnDeleteElement = await frameContent?.$('//div[@title="Delete"]');
@@ -144,7 +144,8 @@ export class TestPlan extends BasePage {
         let cantidadTotal = btnDeleteElementTotal?.length != null ? btnDeleteElementTotal?.length /*+ 1*/ : btnDeleteElementTotal?.length;
         let contEliminados = 0;
         let count = 1;
-        console.log(`\n************************** ELIMINANDO ${nombrePrueba} *****************************`)
+        console.log(`\n************************** ELIMINANDO ${nombrePrueba} (${idJira})*****************************`)
+
         console.log(`\nCantidad total a eliminar: ${cantidadTotal}`)
         while (btnDeleteElement) {
             console.log(`Eliminando dato`);
@@ -163,6 +164,6 @@ export class TestPlan extends BasePage {
         contEliminados == 1 ? 
         console.log(`Se eliminó ${contEliminados} registro del test case ${nombrePrueba}`) : 
         console.log(`Se eliminaron ${contEliminados} registros del test case ${nombrePrueba}`);
-        console.log(`\n************************** ${nombrePrueba} ELIMINADO ******************************`)
+        console.log(`\n************************** ${nombrePrueba} (${idJira}) ELIMINADO ******************************`)
     }
 }
