@@ -44,8 +44,8 @@ test('noAfectacion', async ({page}) => {
 test('DeletefuncionalPositivo', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
-    await basePage.iniciarSesison('FUNCIONAL POSITIVO');
-    await testPlan.eliminarRegistros('FUNCIONAL POSITIVO');
+    const idJira = await basePage.iniciarSesison('FUNCIONAL POSITIVO');
+    await testPlan.eliminarRegistros('FUNCIONAL POSITIVO', idJira);
 })
 
 // Comando para ejecutar funcional Negativo:
@@ -53,8 +53,8 @@ test('DeletefuncionalPositivo', async ({page}) => {
 test('DeleteNegativo', async ({page}) => { //no escribe nada ni no marca error
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
-    await basePage.iniciarSesison('FUNCIONAL NEGATIVO');
-    await testPlan.eliminarRegistros('FUNCIONAL NEGATIVO');
+    const idJira = await basePage.iniciarSesison('FUNCIONAL NEGATIVO');
+    await testPlan.eliminarRegistros('FUNCIONAL NEGATIVO', idJira);
 })
 
 // Comando para ejecutar excepcion:
@@ -62,8 +62,8 @@ test('DeleteNegativo', async ({page}) => { //no escribe nada ni no marca error
 test('Deleteexcepcion', async ({page}) => { //no escribe nada ni no marca error
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
-    await basePage.iniciarSesison('EXCEPCIÓN');
-    await testPlan.eliminarRegistros('EXCEPCIÓN');
+    const idJira = await basePage.iniciarSesison('EXCEPCIÓN');
+    await testPlan.eliminarRegistros('EXCEPCIÓN', idJira);
 })
 
 // Comando para ejecutar no Afectacion:
@@ -71,6 +71,6 @@ test('Deleteexcepcion', async ({page}) => { //no escribe nada ni no marca error
 test('DeletenoAfectacion', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
-    await basePage.iniciarSesison('NO AFECTACIÓN');
-    await testPlan.eliminarRegistros('NO AFECTACIÓN');
+    const idJira = await basePage.iniciarSesison('NO AFECTACIÓN');
+    await testPlan.eliminarRegistros('NO AFECTACIÓN', idJira);
 })
