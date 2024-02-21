@@ -106,8 +106,10 @@ export class TestPlan extends BasePage {
         try {
             //ESPERA A QUE EL ELEMENTO FRAME CARGUE
             const frameContent = await this.EsperarFrame(); 
-            const btnDeleteElements = await this.btnDelete.all();
-            return btnDeleteElements.length;
+            const btnDeleteElements = await this.btnDelete.all(); // este es el que se usaba
+            const btnDeleteElements2 = await frameContent?.$$("//div[@title='Delete']"); //este es el parche (analizarlo) por cuestiones de tiempo
+            //return btnDeleteElements.length;
+            return btnDeleteElements2?.length == undefined ? 0 : btnDeleteElements2.length;
         } catch (error) {
             await this.handleError(
                 "Ocurrió un error al obtener el número de registros:",
