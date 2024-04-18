@@ -15,11 +15,11 @@ export class TestPlan extends BasePage {
 
     constructor(page: Page) {
         super(page);
-        this.btnDelete = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two-7698253642720034326__')]").locator("//div[@title='Delete']")
-        this.testStep = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two-7698253642720034326__')]").locator('#zs-field-step--1')
-        this.testData = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two-7698253642720034326__')]").locator('#zs-field-data--1')
-        this.testResult = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two-7698253642720034326__')]").locator('#zs-field-result--1')
-        this.addSteps = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two-7698253642720034326__')]").locator("//div[@title='Add Steps']")
+        this.btnDelete = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two')]").locator("//div[@title='Delete']")
+        this.testStep = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two')]").locator('#zs-field-step--1')
+        this.testData = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two')]").locator('#zs-field-data--1')
+        this.testResult = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two')]").locator('#zs-field-result--1')
+        this.addSteps = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two')]").locator("//div[@title='Add Steps']")
         this.txtBusqueda = page.locator('[data-test-id="search-dialog-input"]');
         this.page_carga = page.getByTestId('issue.views.issue-base.foundation.breadcrumbs.project.item')
         this.btnAdd = page.getByTitle('Add Steps').getByRole('img');
@@ -120,19 +120,17 @@ export class TestPlan extends BasePage {
     }
 
     async EsperarFrame(){
-        const frame = await this.page.waitForSelector("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two-7698253642720034326__')]");
+        const frame = await this.page.waitForSelector("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two')]");
         const frameContent = await frame.contentFrame();
         //PARA OBTENER SIEMPRE EL FRAMECONTENT, CASO CONTRARIO QUE ENVÍE NULO
         if (!frameContent) {
             console.error('El contenido del frame no se pudo obtener.');
             return null;
         }
-
         //VALIDA QUE EXISTAN DATOS, SI DESPUES DE 10 SEGUNDOS NO ENCUENTRA NADA SIGUE EL PROCESO
         let elementInsideFrame; 
         try{elementInsideFrame = await frameContent.waitForSelector("//div[@title='Delete']", { timeout: 10000 });}
         catch(error){return frameContent;}
-
         return frameContent;
     }
 
