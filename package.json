@@ -1,7 +1,7 @@
 {
   "name": "cargajira",
   "version": "1.0.0",
-  "description": "��#\u0000 \u0000R\u0000e\u0000g\u0000i\u0000s\u0000t\u0000r\u0000o\u0000J\u0000i\u0000r\u0000a\u0000\r\u0000 \u0000",
+  "description": "  #\u0000 \u0000R\u0000e\u0000g\u0000i\u0000s\u0000t\u0000r\u0000o\u0000J\u0000i\u0000r\u0000a\u0000\r\u0000 \u0000",
   "main": "index.js",
   "keywords": [],
   "author": "",
@@ -24,6 +24,11 @@
     "flow:funcionalPositivo": "npx playwright test cargarJira.spec.ts -g funcionalPositivo",
     "flow:funcionalNegativo": "npx playwright test cargarJira.spec.ts -g funcionalNegativo",
     "flow:excepcion": "npx playwright test cargarJira.spec.ts -g excepcion",
-    "flow:noAfectacion": "npx playwright test cargarJira.spec.ts -g noAfectacion"
+    "flow:noAfectacion": "npx playwright test cargarJira.spec.ts -g noAfectacion",
+    
+    "delete:funcionalPositivo": "npx playwright test eliminarJira.spec.ts -g DeletefuncionalPositivo",
+    "delete:funcionalNegativo": "npx playwright test eliminarJira.spec.ts -g DeletefuncionalNegativo",
+    "delete:excepcion": "npx playwright test eliminarJira.spec.ts -g Deleteexcepcion",
+    "delete:noAfectacion": "npx playwright test eliminarJira.spec.ts -g DeletenoAfectacion"
   }
 }

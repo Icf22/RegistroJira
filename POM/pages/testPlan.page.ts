@@ -59,9 +59,9 @@ export class TestPlan extends BasePage {
 
             //CARGA LOS DATOS EN LA VARIABLE DATOS
             for (let i = fila; i <= ultimaFila; i++) {
-                const nombrePrueba: string = worksheet['E' + i]?.w;
+                const nombrePrueba: string = worksheet['H' + i]?.w;
                 const precondiciones: string = worksheet['F' + i]?.w;
-                const script: string = worksheet['H' + i]?.w;
+                const script: string = worksheet['I' + i]?.w;
                 datos.push({ nombrePrueba, precondiciones, script });
             }
 
@@ -69,9 +69,9 @@ export class TestPlan extends BasePage {
             const LlenarCampos = async (dato: Dato) => {
                 const { nombrePrueba, precondiciones, script } = dato;
 
-                await this.testStep.fill(script);
-                await this.testData.fill(nombrePrueba);
-                await this.testResult.fill(precondiciones);
+                await this.testStep.fill(nombrePrueba);
+                await this.testData.fill(precondiciones);
+                await this.testResult.fill(script);
                 await this.addSteps.click();
             };
             //LLAMA LA FUNCION PARA LLENAR LOS DATOS, DESPUES DE LLENAR UNO, DA UN TIEMPO DE ESPERA A QUE SE REGISTRE EL DATO ANTERIOR PARA QUE NO REGISTRE DATOS EN BLANCO
@@ -79,17 +79,24 @@ export class TestPlan extends BasePage {
             //await frame.waitForLoadState('networkidle');
             //await this.testData.click();
             const registros_iniciales = await this.obtenerRegistros();
+            console.log(`\n************************** ${hoja_excell} *****************************`)
             console.log("Casos actuales en jira para los registros tipo"+ " " + hoja_excell + ": " + registros_iniciales)
-            console.log("Casos para registrar disponibles en la matriz:" + " " + (ultimaFila - fila + 1 ))
+            console.log("Casos para registrar disponibles en la matriz:" + " " + (ultimaFila - fila + 1 ) + '\n')
             const tiempoEspera = 1500;
+            var count =  1;
             for (const dato of datos) {
+                console.log(`Cargando dato ${count}...`)
                 await LlenarCampos(dato);
+                process.stdout.write('\u001b[A\u001b[K\u001b[A');
+                console.log(`Dato ${count} cargado \u2713`)
                 await new Promise(resolve => setTimeout(resolve, tiempoEspera));
+                process.stdout.write('\u001b[A\u001b[K\u001b[A');
+                count++;
             }
             const registros_finales = await this.obtenerRegistros();
             console.log("Casos procesados/cargados en jira para el tipo " + hoja_excell + " " +  "son" + " " + (registros_finales-registros_iniciales))
-            console.log("Total de casos registrados en jira para el test case tipo " +" " + hoja_excell + " " + registros_finales);
-            
+            console.log("Total de casos registrados en jira para el test case tipo " +" " + hoja_excell + " " + (registros_finales));
+            console.log(`************************************************************************`);
         } catch (error) {
             console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++' + error);
         }
@@ -99,8 +106,10 @@ export class TestPlan extends BasePage {
         try {
             //ESPERA A QUE EL ELEMENTO FRAME CARGUE
             const frameContent = await this.EsperarFrame(); 
-            const btnDeleteElements = await this.btnDelete.all();
-            return btnDeleteElements.length;
+            const btnDeleteElements = await this.btnDelete.all(); // este es el que se usaba
+            const btnDeleteElements2 = await frameContent?.$$("//div[@title='Delete']"); //este es el parche (analizarlo) por cuestiones de tiempo
+            //return btnDeleteElements.length;
+            return btnDeleteElements2?.length == undefined ? 0 : btnDeleteElements2.length;
         } catch (error) {
             await this.handleError(
                 "Ocurrió un error al obtener el número de registros:",
@@ -125,22 +134,34 @@ export class TestPlan extends BasePage {
         return frameContent;
     }
 
-    async eliminarRegistros(nombrePrueba: String) {
+    async eliminarRegistros(nombrePrueba: String, idJira: String) {
         const frameContent = await this.EsperarFrame();
         const tiempoEspera = 1000;
         let btnDeleteElement = await frameContent?.$('//div[@title="Delete"]');
+        let btnDeleteElementTotal = await frameContent?.$$('//div[@title="Delete"]');
+        let cantidadTotal = btnDeleteElementTotal?.length != null ? btnDeleteElementTotal?.length /*+ 1*/ : btnDeleteElementTotal?.length;
         let contEliminados = 0;
+        let count = 1;
+        console.log(`\n************************** ELIMINANDO ${nombrePrueba} (${idJira})*****************************`)
+
+        console.log(`\nCantidad total a eliminar: ${cantidadTotal}`)
         while (btnDeleteElement) {
+            console.log(`Eliminando dato`);
             await btnDeleteElement.click();
             const btnDeleteElementDelete = await frameContent?.$('button[type="button"].ak-button.ak-button__appearance-primary');
             btnDeleteElementDelete?.click();
+            process.stdout.write('\u001b[A\u001b[K\u001b[A');
+            console.log(`Dato ${count} Eliminado \u2713`);
             await frameContent?.waitForTimeout(tiempoEspera);
             // Vuelve a buscar el botón de eliminar después de hacer clic en uno
             btnDeleteElement = await frameContent?.$('//div[@title="Delete"]');
             contEliminados++;
+            count++;
+            process.stdout.write('\u001b[A\u001b[K\u001b[A');
         }
         contEliminados == 1 ? 
         console.log(`Se eliminó ${contEliminados} registro del test case ${nombrePrueba}`) : 
         console.log(`Se eliminaron ${contEliminados} registros del test case ${nombrePrueba}`);
+        console.log(`\n************************** ${nombrePrueba} (${idJira}) ELIMINADO ******************************`)
     }
 }
