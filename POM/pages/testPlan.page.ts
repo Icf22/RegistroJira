@@ -1,5 +1,5 @@
-import { Locator, Page, test } from "@playwright/test";
-import { RUTAS } from "../data/constantes";
+import { Locator, Page, test, ElementHandle } from "@playwright/test";
+import { EXCEL, CONSOLA, TIEMPOESPERA, RUTAS, XPATH } from "../data/constantes";
 import * as XLSX from 'xlsx';
 import { BasePage } from "../pages/base.page"
 
@@ -15,12 +15,12 @@ export class TestPlan extends BasePage {
 
     constructor(page: Page) {
         super(page);
-        this.btnDelete = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two')]").locator("//div[@title='Delete']")
-        this.testStep = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two')]").locator('#zs-field-step--1')
-        this.testData = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two')]").locator('#zs-field-data--1')
-        this.testResult = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two')]").locator('#zs-field-result--1')
-        this.addSteps = page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two')]").locator("//div[@title='Add Steps']")
-        this.txtBusqueda = page.locator('[data-test-id="search-dialog-input"]');
+        this.btnDelete = page.frameLocator(XPATH.xFrameId).locator(XPATH.xBtnDelete)
+        this.testStep = page.frameLocator(XPATH.xFrameId).locator(XPATH.xBtnTestStep)
+        this.testData = page.frameLocator(XPATH.xFrameId).locator(XPATH.xBtnTestData)
+        this.testResult = page.frameLocator(XPATH.xFrameId).locator(XPATH.xBtnTestResult)
+        this.addSteps = page.frameLocator(XPATH.xFrameId).locator(XPATH.xBtnAddStep)
+        this.txtBusqueda = page.locator(XPATH.xTxtBusqueda);
         this.page_carga = page.getByTestId('issue.views.issue-base.foundation.breadcrumbs.project.item')
         this.btnAdd = page.getByTitle('Add Steps').getByRole('img');
     }
@@ -59,9 +59,9 @@ export class TestPlan extends BasePage {
 
             //CARGA LOS DATOS EN LA VARIABLE DATOS
             for (let i = fila; i <= ultimaFila; i++) {
-                const nombrePrueba: string = worksheet['H' + i]?.w;
-                const precondiciones: string = worksheet['F' + i]?.w;
-                const script: string = worksheet['I' + i]?.w;
+                const nombrePrueba: string = worksheet[EXCEL.NOMBREPRUEBA + i]?.w;
+                const precondiciones: string = worksheet[EXCEL.PRECONDICION + i]?.w;
+                const script: string = worksheet[EXCEL.SCRIPT + i]?.w;
                 datos.push({ nombrePrueba, precondiciones, script });
             }
 
@@ -74,31 +74,29 @@ export class TestPlan extends BasePage {
                 await this.testResult.fill(script);
                 await this.addSteps.click();
             };
-            //LLAMA LA FUNCION PARA LLENAR LOS DATOS, DESPUES DE LLENAR UNO, DA UN TIEMPO DE ESPERA A QUE SE REGISTRE EL DATO ANTERIOR PARA QUE NO REGISTRE DATOS EN BLANCO
-            //const frame = this.page.frameLocator("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two-7698253642720034326__')]");
-            //await frame.waitForLoadState('networkidle');
-            //await this.testData.click();
+
             const registros_iniciales = await this.obtenerRegistros();
-            console.log(`\n************************** ${hoja_excell} *****************************`)
-            console.log("Casos actuales en jira para los registros tipo"+ " " + hoja_excell + ": " + registros_iniciales)
-            console.log("Casos para registrar disponibles en la matriz:" + " " + (ultimaFila - fila + 1 ) + '\n')
-            const tiempoEspera = 1500;
+            CONSOLA.EspacioConNombreHoja(hoja_excell);
+            CONSOLA.CasosActuales(hoja_excell,registros_iniciales);
+            CONSOLA.CasosPorAfectar((ultimaFila - fila + 1 ));
+            const tiempoEspera = TIEMPOESPERA.TiempoEsperaRegistro;
             var count =  1;
             for (const dato of datos) {
-                console.log(`Cargando dato ${count}...`)
+                CONSOLA.CargandoDato(count);
                 await LlenarCampos(dato);
-                process.stdout.write('\u001b[A\u001b[K\u001b[A');
-                console.log(`Dato ${count} cargado \u2713`)
+                CONSOLA.EliminarLineaAnterior();
+                CONSOLA.DatoRegistrado(count);
                 await new Promise(resolve => setTimeout(resolve, tiempoEspera));
-                process.stdout.write('\u001b[A\u001b[K\u001b[A');
+                CONSOLA.EliminarLineaAnterior();
                 count++;
             }
             const registros_finales = await this.obtenerRegistros();
-            console.log("Casos procesados/cargados en jira para el tipo " + hoja_excell + " " +  "son" + " " + (registros_finales-registros_iniciales))
-            console.log("Total de casos registrados en jira para el test case tipo " +" " + hoja_excell + " " + (registros_finales));
-            console.log(`************************************************************************`);
+            CONSOLA.CasosProcesados(hoja_excell,(registros_finales-registros_iniciales));
+            CONSOLA.TotalRegistrados(hoja_excell, (registros_finales));
+            CONSOLA.EspacioAsteriscos();
+
         } catch (error) {
-            console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++' + error);
+            CONSOLA.ErrorMsj(error);
         }
     }
 
@@ -107,12 +105,12 @@ export class TestPlan extends BasePage {
             //ESPERA A QUE EL ELEMENTO FRAME CARGUE
             const frameContent = await this.EsperarFrame(); 
             const btnDeleteElements = await this.btnDelete.all(); // este es el que se usaba
-            const btnDeleteElements2 = await frameContent?.$$("//div[@title='Delete']"); //este es el parche (analizarlo) por cuestiones de tiempo
+            const btnDeleteElements2 = await frameContent?.$$(XPATH.xBtnDelete); //este es el parche (analizarlo) por cuestiones de tiempo
             //return btnDeleteElements.length;
             return btnDeleteElements2?.length == undefined ? 0 : btnDeleteElements2.length;
         } catch (error) {
             await this.handleError(
-                "Ocurrió un error al obtener el número de registros:",
+                CONSOLA.ErrorNumRegistros,
                 error
             );
             throw error;
@@ -120,16 +118,16 @@ export class TestPlan extends BasePage {
     }
 
     async EsperarFrame(){
-        const frame = await this.page.waitForSelector("//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two')]");
+        const frame = await this.page.waitForSelector(XPATH.xFrameId);
         const frameContent = await frame.contentFrame();
         //PARA OBTENER SIEMPRE EL FRAMECONTENT, CASO CONTRARIO QUE ENVÍE NULO
         if (!frameContent) {
-            console.error('El contenido del frame no se pudo obtener.');
+            CONSOLA.ErrorFrame();
             return null;
         }
         //VALIDA QUE EXISTAN DATOS, SI DESPUES DE 10 SEGUNDOS NO ENCUENTRA NADA SIGUE EL PROCESO
         let elementInsideFrame; 
-        try{elementInsideFrame = await frameContent.waitForSelector("//div[@title='Delete']", { timeout: 10000 });}
+        try{elementInsideFrame = await frameContent.waitForSelector(XPATH.xBtnDelete, { timeout: 10000 });}
         catch(error){return frameContent;}
         return frameContent;
     }
@@ -137,31 +135,173 @@ export class TestPlan extends BasePage {
     async eliminarRegistros(nombrePrueba: String, idJira: String) {
         const frameContent = await this.EsperarFrame();
         const tiempoEspera = 1000;
-        let btnDeleteElement = await frameContent?.$('//div[@title="Delete"]');
-        let btnDeleteElementTotal = await frameContent?.$$('//div[@title="Delete"]');
+        let btnDeleteElement = await frameContent?.$(XPATH.xBtnDelete);
+        let btnDeleteElementTotal = await frameContent?.$$(XPATH.xBtnDelete);
         let cantidadTotal = btnDeleteElementTotal?.length != null ? btnDeleteElementTotal?.length /*+ 1*/ : btnDeleteElementTotal?.length;
         let contEliminados = 0;
         let count = 1;
-        console.log(`\n************************** ELIMINANDO ${nombrePrueba} (${idJira})*****************************`)
-
-        console.log(`\nCantidad total a eliminar: ${cantidadTotal}`)
+        CONSOLA.MsjEliminando(nombrePrueba, idJira);
+        CONSOLA.CantidadEliminar(cantidadTotal);
         while (btnDeleteElement) {
-            console.log(`Eliminando dato`);
+            CONSOLA.EliminandoDato();
             await btnDeleteElement.click();
-            const btnDeleteElementDelete = await frameContent?.$('button[type="button"].ak-button.ak-button__appearance-primary');
+            const btnDeleteElementDelete = await frameContent?.$(XPATH.xBtnDeleteModal);
             btnDeleteElementDelete?.click();
-            process.stdout.write('\u001b[A\u001b[K\u001b[A');
-            console.log(`Dato ${count} Eliminado \u2713`);
+            CONSOLA.EliminarLineaAnterior();
+            CONSOLA.DatoEliminado(count);
             await frameContent?.waitForTimeout(tiempoEspera);
             // Vuelve a buscar el botón de eliminar después de hacer clic en uno
-            btnDeleteElement = await frameContent?.$('//div[@title="Delete"]');
+            btnDeleteElement = await frameContent?.$(XPATH.xBtnDelete);
             contEliminados++;
             count++;
-            process.stdout.write('\u001b[A\u001b[K\u001b[A');
+            CONSOLA.EliminarLineaAnterior();
         }
         contEliminados == 1 ? 
-        console.log(`Se eliminó ${contEliminados} registro del test case ${nombrePrueba}`) : 
-        console.log(`Se eliminaron ${contEliminados} registros del test case ${nombrePrueba}`);
-        console.log(`\n************************** ${nombrePrueba} (${idJira}) ELIMINADO ******************************`)
+        CONSOLA.UnDatoEliminado(contEliminados,nombrePrueba):
+        CONSOLA.DatosEliminados(contEliminados,nombrePrueba);
+        CONSOLA.Eliminado(nombrePrueba, idJira);
+    }
+
+    async EsperarFrameExecute(){
+        const frame = await this.page.waitForSelector(XPATH.xFrameExecId);
+        const frameContent = await frame.contentFrame();
+        //PARA OBTENER SIEMPRE EL FRAMECONTENT, CASO CONTRARIO QUE ENVÍE NULO
+        if (!frameContent) {
+            CONSOLA.ErrorFrame();
+            return null;
+        }
+        //VALIDA QUE EXISTAN DATOS, SI DESPUES DE 10 SEGUNDOS NO ENCUENTRA NADA SIGUE EL PROCESO
+        let elementInsideFrame; 
+        try{elementInsideFrame = await frameContent.waitForSelector(XPATH.xBtnExecute, { timeout: 10000 });}
+        catch(error){return frameContent;}
+        return frameContent;
+    }
+
+    async EsperarFrameExecuteRegister(){
+        const frame = await this.page.waitForSelector(XPATH.xFrameExecReg);
+        const frameContent = await frame.contentFrame();
+        //PARA OBTENER SIEMPRE EL FRAMECONTENT, CASO CONTRARIO QUE ENVÍE NULO
+        if (!frameContent) {
+            CONSOLA.ErrorFrame();
+            return null;
+        }
+        
+        await frameContent.waitForLoadState('networkidle');
+
+        //VALIDA QUE EXISTAN DATOS, SI DESPUES DE 10 SEGUNDOS NO ENCUENTRA NADA SIGUE EL PROCESO
+        let elementInsideFrame; 
+        try{elementInsideFrame = await frameContent.waitForSelector(XPATH.xTxtExecute, { timeout: 10000 });}
+        catch(error){return frameContent;}
+        return frameContent;
+    }
+
+    async abrirCiclo(hoja_excell: string, idJira: string){
+        const frameContent = await this.EsperarFrameExecute();
+        const tiempoEspera = 1000;
+        let btnExecuteElementTotal = await frameContent?.$$(XPATH.xBtnExecute);
+        if (btnExecuteElementTotal == null) {
+            CONSOLA.ErrorElementos();
+            return;
+        }
+        let cantidadTotal = btnExecuteElementTotal.length;
+        if (cantidadTotal > 0) {
+            const ultimoElemento = btnExecuteElementTotal[cantidadTotal - 1];
+            await ultimoElemento.click();
+        } else {
+            CONSOLA.ErrorElementos();
+        }
+    }
+
+    async tratarExcel(hoja_excell: string, fila: number){
+        type FilaExcel = Array<number | string | Date | boolean | null | undefined>;
+            const filePath = RUTAS.matriz;
+            const workbook = XLSX.readFile(filePath);
+            const nameSheet = hoja_excell;
+            const worksheet = workbook.Sheets[nameSheet];
+
+            const data: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+            let ultimaFila = -1;
+
+            for (let i = data.length - 1; i >= 0; i--) {
+                const fila = data[i];
+                //VALIDA QUE LA FILA TENGA ALMENOS UN DATO EN SUS CELDAS
+                if (fila.some(celda => celda !== undefined && celda !== '')) {
+                    ultimaFila = i + 1; //SE CONVIERTE EN AMBITO BASADO EN 1
+                    break; //TERMINA EL BUCLE
+                }
+            }
+            return{workbook, worksheet, data, ultimaFila};
+    }
+
+    async validarRegistro(registros_excel: number, registros_ejecucion: number){
+        let seValida = false
+        if(registros_excel == registros_ejecucion){
+            seValida = true;
+        }
+        return seValida;
+    }
+
+    async registrarCiclo(hoja_excell: string, fila: number){
+        try {
+            const {workbook, worksheet, data, ultimaFila} = await this.tratarExcel(hoja_excell, fila);
+            //OBJETO PARA CREAR ARREGLO CON VARIOS PARAMETROS
+            interface Dato {
+                resultadoActual: string;
+            }
+            //ARREGLO PARA ALMACENAR LOS DATOS
+            const datos: Dato[] = [];
+
+            //CARGA LOS DATOS EN LA VARIABLE DATOS
+            for (let i = fila; i <= ultimaFila; i++) {
+                const resultadoActual: string = worksheet[EXCEL.RESULACTUAL + i]?.w;
+                datos.push({ resultadoActual });
+            }
+            
+            //ESPERAMOS A QUE EL FRAME DE EJECUCION CARGUE
+            const frameContent = await this.EsperarFrameExecuteRegister();
+            let txtExecute = await frameContent?.$$(XPATH.xTxtExecute);
+            if (!txtExecute || txtExecute.length == 0) {
+                CONSOLA.ErrorElementos();
+                return;
+            }
+            else{
+                let validado = await this.validarRegistro((ultimaFila - fila + 1), (txtExecute.length - 1));
+                if(!validado){
+                    CONSOLA.EspacioAsteriscos();
+                    CONSOLA.ElementosNoCoinciden((ultimaFila - fila + 1), (txtExecute.length - 1));
+                    CONSOLA.EspacioAsteriscos();
+                    return;
+                }
+            }
+            //FUNCION DONDE LLENA LOS CAMPOS
+            const LlenarCampos = async (dato: Dato, count: number) => {
+                const { resultadoActual } = dato;
+                const element = txtExecute[count];
+                await element.click();
+                await element.waitForElementState("visible");
+                await element.click();
+                await this.page.keyboard.type(resultadoActual);
+                await this.page.mouse.click(50, 50);
+            };
+
+            CONSOLA.EspacioConNombreHoja(hoja_excell + "REGISTRO DE EJECUCION");
+            CONSOLA.CasosPorAfectar((ultimaFila - fila + 1 ));
+            const tiempoEspera = TIEMPOESPERA.TiempoEsperaRegistro;
+            var count =  1;
+            for (const dato of datos) {
+                CONSOLA.CargandoDato(count);
+                await LlenarCampos(dato, count);
+                CONSOLA.EliminarLineaAnterior();
+                CONSOLA.DatoRegistrado(count);
+                await new Promise(resolve => setTimeout(resolve, tiempoEspera));
+                CONSOLA.EliminarLineaAnterior();
+                count++;
+            }
+            CONSOLA.EspacioAsteriscos();
+
+        } catch (error) {
+            CONSOLA.ErrorMsj(error);
+        }
     }
 }
