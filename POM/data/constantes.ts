@@ -1,6 +1,6 @@
 export const URL= {
-    JIRAURL: 'https://id.atlassian.com/login',
-    TESTPLAN:'https://e-global.atlassian.net/browse/'
+    JIRAURL: '',
+    TESTPLAN:''
 }
 
 export const RUTAS = {

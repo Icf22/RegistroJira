@@ -25,21 +25,17 @@ export class TestPlan extends BasePage {
         this.btnAdd = page.getByTitle('Add Steps').getByRole('img');
     }
 
-    async registrarMatriz(hoja_excell: string, fila: number) {
-        try {
-            type FilaExcel = Array<number | string | Date | boolean | null | undefined>;
+    async tratarExcel(hoja_excell: string, fila: number){
+        type FilaExcel = Array<number | string | Date | boolean | null | undefined>;
             const filePath = RUTAS.matriz;
             const workbook = XLSX.readFile(filePath);
             const nameSheet = hoja_excell;
             const worksheet = workbook.Sheets[nameSheet];
 
-            // CONVIERTE LA HOJA DE EXCEL EN UN ARREGLO any[][] ESTO INDICA QUE ES UN ARREGLO DE CUALQUIER TIPO DE DATO Y POR ESO MISMO TRAE TODO EL RANGO DE FILAS
             const data: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-            //SE DECLARA LA VARIABLE EN -1 PARA INDICAR QUE NO HAY FILAS CON DATOS
             let ultimaFila = -1;
 
-            //LO HACE A LA INVERSA PARA ENCONTRAR LA ULTIMA LINEA OCUPADA POR INFORMACION
             for (let i = data.length - 1; i >= 0; i--) {
                 const fila = data[i];
                 //VALIDA QUE LA FILA TENGA ALMENOS UN DATO EN SUS CELDAS
@@ -48,6 +44,13 @@ export class TestPlan extends BasePage {
                     break; //TERMINA EL BUCLE
                 }
             }
+            return{workbook, worksheet, data, ultimaFila};
+    }
+
+    async registrarMatriz(hoja_excell: string, fila: number) {
+        try {
+            const {workbook, worksheet, data, ultimaFila} = await this.tratarExcel(hoja_excell, fila);
+            
             //OBJETO PARA CREAR ARREGLO CON VARIOS PARAMETROS
             interface Dato {
                 nombrePrueba: string;
@@ -103,7 +106,7 @@ export class TestPlan extends BasePage {
     async obtenerRegistros() {
         try {
             //ESPERA A QUE EL ELEMENTO FRAME CARGUE
-            const frameContent = await this.EsperarFrame(); 
+            const frameContent = await this.EsperarFrame(XPATH.xFrameId, XPATH.xBtnDelete); 
             const btnDeleteElements = await this.btnDelete.all(); // este es el que se usaba
             const btnDeleteElements2 = await frameContent?.$$(XPATH.xBtnDelete); //este es el parche (analizarlo) por cuestiones de tiempo
             //return btnDeleteElements.length;
@@ -117,23 +120,26 @@ export class TestPlan extends BasePage {
         }
     }
 
-    async EsperarFrame(){
-        const frame = await this.page.waitForSelector(XPATH.xFrameId);
+    async EsperarFrame(frameId : string, element: string){
+        const frame = await this.page.waitForSelector(frameId);
         const frameContent = await frame.contentFrame();
         //PARA OBTENER SIEMPRE EL FRAMECONTENT, CASO CONTRARIO QUE ENVÍE NULO
         if (!frameContent) {
             CONSOLA.ErrorFrame();
             return null;
         }
+        
+        await frameContent.waitForLoadState('networkidle');
+
         //VALIDA QUE EXISTAN DATOS, SI DESPUES DE 10 SEGUNDOS NO ENCUENTRA NADA SIGUE EL PROCESO
         let elementInsideFrame; 
-        try{elementInsideFrame = await frameContent.waitForSelector(XPATH.xBtnDelete, { timeout: 10000 });}
+        try{elementInsideFrame = await frameContent.waitForSelector(element, { timeout: 10000 });}
         catch(error){return frameContent;}
         return frameContent;
     }
 
     async eliminarRegistros(nombrePrueba: String, idJira: String) {
-        const frameContent = await this.EsperarFrame();
+        const frameContent = await this.EsperarFrame(XPATH.xFrameId, XPATH.xBtnDelete);
         const tiempoEspera = 1000;
         let btnDeleteElement = await frameContent?.$(XPATH.xBtnDelete);
         let btnDeleteElementTotal = await frameContent?.$$(XPATH.xBtnDelete);
@@ -162,41 +168,8 @@ export class TestPlan extends BasePage {
         CONSOLA.Eliminado(nombrePrueba, idJira);
     }
 
-    async EsperarFrameExecute(){
-        const frame = await this.page.waitForSelector(XPATH.xFrameExecId);
-        const frameContent = await frame.contentFrame();
-        //PARA OBTENER SIEMPRE EL FRAMECONTENT, CASO CONTRARIO QUE ENVÍE NULO
-        if (!frameContent) {
-            CONSOLA.ErrorFrame();
-            return null;
-        }
-        //VALIDA QUE EXISTAN DATOS, SI DESPUES DE 10 SEGUNDOS NO ENCUENTRA NADA SIGUE EL PROCESO
-        let elementInsideFrame; 
-        try{elementInsideFrame = await frameContent.waitForSelector(XPATH.xBtnExecute, { timeout: 10000 });}
-        catch(error){return frameContent;}
-        return frameContent;
-    }
-
-    async EsperarFrameExecuteRegister(){
-        const frame = await this.page.waitForSelector(XPATH.xFrameExecReg);
-        const frameContent = await frame.contentFrame();
-        //PARA OBTENER SIEMPRE EL FRAMECONTENT, CASO CONTRARIO QUE ENVÍE NULO
-        if (!frameContent) {
-            CONSOLA.ErrorFrame();
-            return null;
-        }
-        
-        await frameContent.waitForLoadState('networkidle');
-
-        //VALIDA QUE EXISTAN DATOS, SI DESPUES DE 10 SEGUNDOS NO ENCUENTRA NADA SIGUE EL PROCESO
-        let elementInsideFrame; 
-        try{elementInsideFrame = await frameContent.waitForSelector(XPATH.xTxtExecute, { timeout: 10000 });}
-        catch(error){return frameContent;}
-        return frameContent;
-    }
-
     async abrirCiclo(hoja_excell: string, idJira: string){
-        const frameContent = await this.EsperarFrameExecute();
+        const frameContent = await this.EsperarFrame(XPATH.xFrameExecId, XPATH.xBtnExecute);
         const tiempoEspera = 1000;
         let btnExecuteElementTotal = await frameContent?.$$(XPATH.xBtnExecute);
         if (btnExecuteElementTotal == null) {
@@ -210,28 +183,6 @@ export class TestPlan extends BasePage {
         } else {
             CONSOLA.ErrorElementos();
         }
-    }
-
-    async tratarExcel(hoja_excell: string, fila: number){
-        type FilaExcel = Array<number | string | Date | boolean | null | undefined>;
-            const filePath = RUTAS.matriz;
-            const workbook = XLSX.readFile(filePath);
-            const nameSheet = hoja_excell;
-            const worksheet = workbook.Sheets[nameSheet];
-
-            const data: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-            let ultimaFila = -1;
-
-            for (let i = data.length - 1; i >= 0; i--) {
-                const fila = data[i];
-                //VALIDA QUE LA FILA TENGA ALMENOS UN DATO EN SUS CELDAS
-                if (fila.some(celda => celda !== undefined && celda !== '')) {
-                    ultimaFila = i + 1; //SE CONVIERTE EN AMBITO BASADO EN 1
-                    break; //TERMINA EL BUCLE
-                }
-            }
-            return{workbook, worksheet, data, ultimaFila};
     }
 
     async validarRegistro(registros_excel: number, registros_ejecucion: number){
@@ -259,7 +210,7 @@ export class TestPlan extends BasePage {
             }
             
             //ESPERAMOS A QUE EL FRAME DE EJECUCION CARGUE
-            const frameContent = await this.EsperarFrameExecuteRegister();
+            const frameContent = await this.EsperarFrame(XPATH.xFrameExecReg, XPATH.xTxtExecute);
             let txtExecute = await frameContent?.$$(XPATH.xTxtExecute);
             if (!txtExecute || txtExecute.length == 0) {
                 CONSOLA.ErrorElementos();
