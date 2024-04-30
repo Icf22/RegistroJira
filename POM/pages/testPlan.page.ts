@@ -50,7 +50,7 @@ export class TestPlan extends BasePage {
     async registrarMatriz(hoja_excell: string, fila: number) {
         try {
             const {workbook, worksheet, data, ultimaFila} = await this.tratarExcel(hoja_excell, fila);
-            
+
             //OBJETO PARA CREAR ARREGLO CON VARIOS PARAMETROS
             interface Dato {
                 nombrePrueba: string;
@@ -217,6 +217,7 @@ export class TestPlan extends BasePage {
                 return;
             }
             else{
+                //VALIDA QUE EL NUMERO DE REGISTROS EXISTENTES SEA EL MISMO NUMERO DE LOS REGISTROS DE LAMATRIZ
                 let validado = await this.validarRegistro((ultimaFila - fila + 1), (txtExecute.length - 1));
                 if(!validado){
                     CONSOLA.EspacioAsteriscos();
