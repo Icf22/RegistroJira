@@ -72,9 +72,9 @@ export class TestPlan extends BasePage {
             const LlenarCampos = async (dato: Dato) => {
                 const { nombrePrueba, precondiciones, script } = dato;
 
-                await this.testStep.fill(nombrePrueba);
-                await this.testData.fill(precondiciones);
-                await this.testResult.fill(script);
+                await this.testStep.fill(nombrePrueba ?? "");
+                await this.testData.fill(precondiciones ?? "");
+                await this.testResult.fill(script ?? "");
                 await this.addSteps.click();
             };
 
@@ -233,7 +233,7 @@ export class TestPlan extends BasePage {
                 await element.click();
                 await element.waitForElementState("visible");
                 await element.click();
-                await this.page.keyboard.type(resultadoActual);
+                await this.page.keyboard.type(resultadoActual ?? "");
                 await this.page.mouse.click(50, 50);
             };
 

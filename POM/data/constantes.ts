@@ -1,13 +1,32 @@
+//TODAS LAS URLS UTILIZADAS EN EL SISTEMA
 export const URL= {
     JIRAURL: 'https://id.atlassian.com/login',
     TESTPLAN:'https://e-global.atlassian.net/browse/'
 }
 
+//RUTAS CORRESPONDIENTES A LOS RECURSOS UTILIZADOS COMO EL EXCEL
 export const RUTAS = {
     matriz : 'C:\\InsumoCargaJira\\MatrizDeEjecucion.xlsx',
     matrizPruebas : './resources/MatrizDeEjecucion.xlsx'
  }
 
+ //TEST EXISTENTES, EN ESTE CASO SON 4 ACTUALMENTE
+export const TEST = {
+    POSITIVO: 'FUNCIONAL POSITIVO',
+    NEGATIVO: 'FUNCIONAL NEGATIVO',
+    EXCEPCION: 'EXCEPCIÓN',
+    AFECTACION: 'NO AFECTACIÓN'
+}
+
+//CORRESPONDE A LA LINEA DEL EXCEL EN DONDE INICIARÁ EL REGISTRO
+ export const INICIO = {
+    POSITIVO: 16,
+    NEGATIVO: 16,
+    EXCEPCION: 16,
+    AFECTACION: 16
+ }
+
+ //CORRESPONDE A LA COLUMNA O FILA QUE SE UTILIZA PARA OBTENER LOS DATOS DEL EXCEL
  export const EXCEL = {
     CADENAVACIA: '',
     OBTENERCASE: 'E',
@@ -15,9 +34,10 @@ export const RUTAS = {
     NOMBREPRUEBA: 'H',
     PRECONDICION:'F',
     SCRIPT: 'I',
-    RESULACTUAL: 'J',
+    RESULACTUAL: 'J'
  }
 
+ //TOTAL DE MENSAJES QUE MUESTRA EL SISTEMA SE REPRESENTARA COMO CONSOLA
  export const CONSOLA = {
     EspacioConNombreHoja: (hoja_excell: string) => 
         console.log(`\n************************** ${hoja_excell} *****************************`),
@@ -58,10 +78,12 @@ export const RUTAS = {
         console.log(`Los elementos en la matriz (${matriz}) no coinciden con los elementos en el ciclo (${ciclo}) revisa que la matriz sea correcta.`)
  }
 
+ //TIEMPOS DE ESPERA ESTABLECIDOS EN EL SISTEMA
  export const TIEMPOESPERA ={
     TiempoEsperaRegistro: 1500
  }
 
+ //LOCALIZADORES, XPATH O CSS UTILIZADOS PARA IDENTIFICAR CADA ELEMENTO
  export const XPATH = {
     xBtnDelete: '//div[@title="Delete"]',
     xFrameId: "//iframe[contains(@id, 'com.thed.zephyr.je__viewissue-teststep-issuecontent-bdd-two')]",
@@ -71,7 +93,7 @@ export const RUTAS = {
     xBtnTestStep: '#zs-field-step--1',
     xBtnTestData: '#zs-field-data--1',
     xBtnTestResult: '#zs-field-result--1',
-    xBtnAddStep: '#zs-field-result--1',
+    xBtnAddStep: "//div[@title='Add Steps']",
     xTxtBusqueda: '[data-test-id="search-dialog-input"]',
     xBtnExecute: 'a.eButton[target="_parent"]',
     xTxtExecute: 'div[data-testid="zs-wiki"]',
