@@ -34,6 +34,7 @@ export const TEST = {
     NOMBREPRUEBA: 'H',
     PRECONDICION:'F',
     SCRIPT: 'I',
+    RESULESPERADO: 'E',
     RESULACTUAL: 'J'
  }
 
