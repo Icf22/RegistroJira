@@ -31,10 +31,9 @@ export const TEST = {
     CADENAVACIA: '',
     OBTENERCASE: 'E',
     NUMBERCASE: 5,
-    NOMBREPRUEBA: 'H',
-    PRECONDICION:'F',
-    SCRIPT: 'I',
-    RESULESPERADO: 'E',
+    SCRIPT: 'H',
+    NOMBREPRUEBA: 'E',
+    RESULESPERADO: 'I',
     RESULACTUAL: 'J'
  }
 

@@ -54,7 +54,7 @@ export class TestPlan extends BasePage {
             //OBJETO PARA CREAR ARREGLO CON VARIOS PARAMETROS
             interface Dato {
                 nombrePrueba: string;
-                precondiciones: string;
+                resultadoEsperado: string;
                 script: string;
             }
             //ARREGLO PARA ALMACENAR LOS DATOS
@@ -63,18 +63,18 @@ export class TestPlan extends BasePage {
             //CARGA LOS DATOS EN LA VARIABLE DATOS
             for (let i = fila; i <= ultimaFila; i++) {
                 const nombrePrueba: string = worksheet[EXCEL.NOMBREPRUEBA + i]?.w;
-                const precondiciones: string = worksheet[EXCEL.PRECONDICION + i]?.w;
+                const resultadoEsperado: string = worksheet[EXCEL.RESULESPERADO + i]?.w;
                 const script: string = worksheet[EXCEL.SCRIPT + i]?.w;
-                datos.push({ nombrePrueba, precondiciones, script });
+                datos.push({ nombrePrueba, resultadoEsperado, script });
             }
 
             //FUNCION DONDE LLENA LOS CAMPOS
             const LlenarCampos = async (dato: Dato) => {
-                const { nombrePrueba, precondiciones, script } = dato;
+                const { nombrePrueba, resultadoEsperado, script } = dato;
 
-                await this.testStep.fill(nombrePrueba ?? "");
-                await this.testData.fill(precondiciones ?? "");
-                await this.testResult.fill(script ?? "");
+                await this.testStep.fill(script ?? "");
+                await this.testData.fill(nombrePrueba ?? "");
+                await this.testResult.fill(resultadoEsperado ?? "");
                 await this.addSteps.click();
             };
 
