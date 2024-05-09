@@ -1,32 +1,35 @@
 import {test} from "@playwright/test";
+import {TEST, INICIO} from "../data/constantes";
 import { BasePage } from "../pages/base.page";
-import {TestPlan} from "../pages/testPlan.page"
+import {TestPlan} from "../pages/testPlan.page";
 
 //TEST PARA ELIMINAR REGISTROS EN JIRA
+test.use({ignoreHTTPSErrors: true});
+// Comando para ejecutar funcional Positivo
 //! npm run delete:funcionalNegativo
 test('DeletefuncionalPositivo', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
-    const idJira = await basePage.iniciarSesison('FUNCIONAL POSITIVO');
-    await testPlan.eliminarRegistros('FUNCIONAL POSITIVO', idJira);
+    const idJira = await basePage.iniciarSesison(TEST.POSITIVO);
+    await testPlan.eliminarRegistros(TEST.POSITIVO, idJira);
 })
 
-// Comando para ejecutar funcional Negativo:
+// Comando para ejecutar funcional Negativo
 //! npm run delete:funcionalNegativo
-test('DeleteNegativo', async ({page}) => { //no escribe nada ni no marca error
+test('DeletefuncionalNegativo', async ({page}) => { 
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
-    const idJira = await basePage.iniciarSesison('FUNCIONAL NEGATIVO');
-    await testPlan.eliminarRegistros('FUNCIONAL NEGATIVO', idJira);
+    const idJira = await basePage.iniciarSesison(TEST.NEGATIVO);
+    await testPlan.eliminarRegistros(TEST.NEGATIVO, idJira);
 })
 
 // Comando para ejecutar excepcion:
 //! npm run delete:excepcion
-test('Deleteexcepcion', async ({page}) => { //no escribe nada ni no marca error
+test('Deleteexcepcion', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
-    const idJira = await basePage.iniciarSesison('EXCEPCIÓN');
-    await testPlan.eliminarRegistros('EXCEPCIÓN', idJira);
+    const idJira = await basePage.iniciarSesison(TEST.EXCEPCION);
+    await testPlan.eliminarRegistros(TEST.EXCEPCION, idJira);
 })
 
 // Comando para ejecutar no Afectacion:
@@ -34,6 +37,6 @@ test('Deleteexcepcion', async ({page}) => { //no escribe nada ni no marca error
 test('DeletenoAfectacion', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
-    const idJira = await basePage.iniciarSesison('NO AFECTACIÓN');
-    await testPlan.eliminarRegistros('NO AFECTACIÓN', idJira);
+    const idJira = await basePage.iniciarSesison(TEST.AFECTACION);
+    await testPlan.eliminarRegistros(TEST.AFECTACION, idJira);
 })

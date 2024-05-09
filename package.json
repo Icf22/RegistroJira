@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@types/xlsx": "^0.0.36",
+    "dotenv": "^16.4.5",
     "exceljs": "^4.4.0",
     "xlsx": "^0.18.5"
   },
@@ -25,10 +26,17 @@
     "flow:funcionalNegativo": "npx playwright test cargarJira.spec.ts -g funcionalNegativo",
     "flow:excepcion": "npx playwright test cargarJira.spec.ts -g excepcion",
     "flow:noAfectacion": "npx playwright test cargarJira.spec.ts -g noAfectacion",
-    
+    "flow:allFlujos": "npx playwright test cargarJira.spec.ts",
     "delete:funcionalPositivo": "npx playwright test eliminarJira.spec.ts -g DeletefuncionalPositivo",
     "delete:funcionalNegativo": "npx playwright test eliminarJira.spec.ts -g DeletefuncionalNegativo",
     "delete:excepcion": "npx playwright test eliminarJira.spec.ts -g Deleteexcepcion",
-    "delete:noAfectacion": "npx playwright test eliminarJira.spec.ts -g DeletenoAfectacion"
+    "delete:noAfectacion": "npx playwright test eliminarJira.spec.ts -g DeletenoAfectacion",
+    "delete:allFlujos": "npx playwright test eliminarJira.spec.ts",
+    "ciclo:funcionalPositivo": "npx playwright test ejecucionesJira.spec.ts -g cicloFuncionalPositivo",
+    "ciclo:funcionalNegativo": "npx playwright test ejecucionesJira.spec.ts -g cicloFuncionalNegativo",
+    "ciclo:excepcion": "npx playwright test ejecucionesJira.spec.ts -g cicloExcepcion",
+    "ciclo:noAfectacion": "npx playwright test ejecucionesJira.spec.ts -g cicloNoAfectacion",
+    "ciclo:allFlujos": "npx playwright test ejecucionesJira.spec.ts"
+    
   }
 }
