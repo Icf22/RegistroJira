@@ -107,10 +107,9 @@ export class TestPlan extends BasePage {
         try {
             //ESPERA A QUE EL ELEMENTO FRAME CARGUE
             const frameContent = await this.EsperarFrame(XPATH.xFrameId, XPATH.xBtnDelete); 
-            const btnDeleteElements = await this.btnDelete.all(); // este es el que se usaba
-            const btnDeleteElements2 = await frameContent?.$$(XPATH.xBtnDelete); //este es el parche (analizarlo) por cuestiones de tiempo
-            //return btnDeleteElements.length;
-            return btnDeleteElements2?.length == undefined ? 0 : btnDeleteElements2.length;
+            //const btnDeleteElements = await this.btnDelete.all();
+            const btnDeleteElements2 = await frameContent?.$$(XPATH.xBtnDelete); 
+            return btnDeleteElements2?.length ?? 0;
         } catch (error) {
             await this.handleError(
                 CONSOLA.ErrorNumRegistros,
@@ -173,16 +172,23 @@ export class TestPlan extends BasePage {
         const tiempoEspera = 1000;
         let btnExecuteElementTotal = await frameContent?.$$(XPATH.xBtnExecute);
         if (btnExecuteElementTotal == null) {
+            CONSOLA.EspacioAsteriscos();
             CONSOLA.ErrorElementos();
-            return;
+            CONSOLA.EspacioAsteriscos();
+            return false;
         }
         let cantidadTotal = btnExecuteElementTotal.length;
         if (cantidadTotal > 0) {
             const ultimoElemento = btnExecuteElementTotal[cantidadTotal - 1];
             await ultimoElemento.click();
+            return true;
         } else {
+            CONSOLA.EspacioAsteriscos();
             CONSOLA.ErrorElementos();
+            CONSOLA.EspacioAsteriscos();
+            return false;
         }
+        return true;
     }
 
     async validarRegistro(registros_excel: number, registros_ejecucion: number){
@@ -237,7 +243,7 @@ export class TestPlan extends BasePage {
                 await this.page.mouse.click(50, 50);
             };
 
-            CONSOLA.EspacioConNombreHoja(hoja_excell + "REGISTRO DE EJECUCION");
+            CONSOLA.EspacioConNombreHoja(hoja_excell + " REGISTRO DE EJECUCION");
             CONSOLA.CasosPorAfectar((ultimaFila - fila + 1 ));
             const tiempoEspera = TIEMPOESPERA.TiempoEsperaRegistro;
             var count =  1;
@@ -250,6 +256,7 @@ export class TestPlan extends BasePage {
                 CONSOLA.EliminarLineaAnterior();
                 count++;
             }
+            CONSOLA.CasosProcesados(hoja_excell,(count - 1));
             CONSOLA.EspacioAsteriscos();
 
         } catch (error) {

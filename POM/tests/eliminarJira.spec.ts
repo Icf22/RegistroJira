@@ -7,7 +7,7 @@ import {TestPlan} from "../pages/testPlan.page";
 test.use({ignoreHTTPSErrors: true});
 // Comando para ejecutar funcional Positivo
 //! npm run delete:funcionalNegativo
-test.only('DeletefuncionalPositivo', async ({page}) => {
+test('DeletefuncionalPositivo', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
     const idJira = await basePage.iniciarSesison(TEST.POSITIVO);

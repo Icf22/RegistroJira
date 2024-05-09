@@ -11,8 +11,10 @@ test('cicloFuncionalPositivo', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
     const idJira = await basePage.iniciarSesison(TEST.POSITIVO);
-    await testPlan.abrirCiclo(TEST.POSITIVO, idJira);
-    await testPlan.registrarCiclo(TEST.POSITIVO, INICIO.POSITIVO);
+    const existe = await testPlan.abrirCiclo(TEST.POSITIVO, idJira);
+    if(existe){
+        await testPlan.registrarCiclo(TEST.POSITIVO, INICIO.POSITIVO);
+    }
 })
 
 // Comando para ejecutar funcional Negativo
@@ -21,8 +23,11 @@ test('cicloFuncionalNegativo', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page)
     const idJira = await basePage.iniciarSesison(TEST.NEGATIVO);
-    await testPlan.abrirCiclo(TEST.NEGATIVO, idJira);
-    await testPlan.registrarCiclo(TEST.NEGATIVO, INICIO.NEGATIVO);
+    const existe = await testPlan.abrirCiclo(TEST.NEGATIVO, idJira);
+    if(existe){
+        await testPlan.registrarCiclo(TEST.NEGATIVO, INICIO.NEGATIVO);
+    }
+    
 })
 
 // Comando para ejecutar excepcion
@@ -31,8 +36,10 @@ test('cicloExcepcion', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
     const idJira = await basePage.iniciarSesison(TEST.EXCEPCION);
-    await testPlan.abrirCiclo(TEST.EXCEPCION, idJira);
-    await testPlan.registrarCiclo(TEST.EXCEPCION, INICIO.EXCEPCION);
+    const existe = await testPlan.abrirCiclo(TEST.EXCEPCION, idJira);
+    if(existe){
+        await testPlan.registrarCiclo(TEST.EXCEPCION, INICIO.EXCEPCION);
+    }
 })
 
 // Comando para ejecutar no Afectacion
@@ -41,6 +48,8 @@ test('cicloNoAfectacion', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
     const idJira = await basePage.iniciarSesison(TEST.AFECTACION);
-    await testPlan.abrirCiclo(TEST.AFECTACION, idJira);
-    await testPlan.registrarCiclo(TEST.AFECTACION, INICIO.AFECTACION);
+    const existe = await testPlan.abrirCiclo(TEST.AFECTACION, idJira);
+    if(existe){
+        await testPlan.registrarCiclo(TEST.AFECTACION, INICIO.AFECTACION);
+    }
 })
