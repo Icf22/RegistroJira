@@ -1,4 +1,4 @@
 export const CREDENTIALS = {
-    CORREO : '',
-    PASSWORD: ''
-   }
+    CORREO: 'hperez2@eglobal.com.mx',
+    PASSWORD: 'EglobalBackOffice2023*'
+};
