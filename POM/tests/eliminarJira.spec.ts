@@ -11,6 +11,7 @@ test('DeletefuncionalPositivo', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
     const idJira = await basePage.iniciarSesison(TEST.POSITIVO);
+    await basePage.saltarLaDobleAutentificacion();
     await testPlan.eliminarRegistros(TEST.POSITIVO, idJira);
 })
 
@@ -20,6 +21,7 @@ test('DeletefuncionalNegativo', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
     const idJira = await basePage.iniciarSesison(TEST.NEGATIVO);
+    await basePage.saltarLaDobleAutentificacion();
     await testPlan.eliminarRegistros(TEST.NEGATIVO, idJira);
 })
 
@@ -29,6 +31,7 @@ test('Deleteexcepcion', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
     const idJira = await basePage.iniciarSesison(TEST.EXCEPCION);
+    await basePage.saltarLaDobleAutentificacion();
     await testPlan.eliminarRegistros(TEST.EXCEPCION, idJira);
 })
 
@@ -38,5 +41,6 @@ test('DeletenoAfectacion', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
     const idJira = await basePage.iniciarSesison(TEST.AFECTACION);
+    await basePage.saltarLaDobleAutentificacion();
     await testPlan.eliminarRegistros(TEST.AFECTACION, idJira);
 })

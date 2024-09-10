@@ -11,6 +11,7 @@ test('cicloFuncionalPositivo', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
     const idJira = await basePage.iniciarSesison(TEST.POSITIVO);
+    await basePage.saltarLaDobleAutentificacion();
     const existe = await testPlan.abrirCiclo(TEST.POSITIVO, idJira);
     if(existe){
         await testPlan.registrarCiclo(TEST.POSITIVO, INICIO.POSITIVO);
@@ -23,6 +24,7 @@ test('cicloFuncionalNegativo', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page)
     const idJira = await basePage.iniciarSesison(TEST.NEGATIVO);
+    await basePage.saltarLaDobleAutentificacion();
     const existe = await testPlan.abrirCiclo(TEST.NEGATIVO, idJira);
     if(existe){
         await testPlan.registrarCiclo(TEST.NEGATIVO, INICIO.NEGATIVO);
@@ -36,6 +38,7 @@ test('cicloExcepcion', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
     const idJira = await basePage.iniciarSesison(TEST.EXCEPCION);
+    await basePage.saltarLaDobleAutentificacion();
     const existe = await testPlan.abrirCiclo(TEST.EXCEPCION, idJira);
     if(existe){
         await testPlan.registrarCiclo(TEST.EXCEPCION, INICIO.EXCEPCION);
@@ -48,6 +51,7 @@ test('cicloNoAfectacion', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
     const idJira = await basePage.iniciarSesison(TEST.AFECTACION);
+    await basePage.saltarLaDobleAutentificacion();
     const existe = await testPlan.abrirCiclo(TEST.AFECTACION, idJira);
     if(existe){
         await testPlan.registrarCiclo(TEST.AFECTACION, INICIO.AFECTACION);

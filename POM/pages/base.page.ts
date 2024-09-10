@@ -11,6 +11,7 @@ export class BasePage{
   readonly btnGoogleContinuar: Locator;
   txtPassword: Locator;
   btnLogIn: Locator;
+  btnContinueSin2FA: Locator;
 
   constructor(page : Page) {
     this.page = page;
@@ -19,6 +20,7 @@ export class BasePage{
     this.btnGoogleContinuar = page.getByRole('button', { name: 'Continuar con Google' });
     this.txtPassword = page.getByPlaceholder('Enter password')
     this.btnLogIn = page.getByRole('button', { name: 'Log in' })
+    this.btnContinueSin2FA = page.locator('button#mfa-promote-dismiss');
     }
 
   async iniciarSesison(pestania: string){ 
@@ -29,7 +31,21 @@ export class BasePage{
     await this.txtPassword.fill(CREDENTIALS.PASSWORD)
     await this.btnLogIn.click();
     return testCase;
-  }   
+  }
+
+  async saltarLaDobleAutentificacion() {
+    //await this.btnContinueSin2FA.click();
+
+    try {
+      await Promise.race([
+        this.btnContinueSin2FA.click(),
+        new Promise((_, reject) => setTimeout(() => reject('Botón no encontrado después de 2 segundos'), 3000))
+      ]);
+    } catch (error) {
+      // Si el botón no es encontrado en 2 segundos, simplemente continua
+      //console.log("Botón de doble autenticación no encontrado, continuando con el flujo...");
+    }
+  }
 
   async obtenerTestCase(pestania:string){
     type FilaExcel = Array<number | string | Date | boolean | null | undefined>;
