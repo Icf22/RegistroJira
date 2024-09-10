@@ -10,6 +10,7 @@ test('funcionalPositivo', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
     await basePage.iniciarSesison(TEST.POSITIVO);
+    await basePage.saltarLaDobleAutentificacion();
     await testPlan.registrarMatriz(TEST.POSITIVO, INICIO.POSITIVO);
 })
 
@@ -19,6 +20,7 @@ test('funcionalNegativo', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
     await basePage.iniciarSesison(TEST.NEGATIVO);
+    await basePage.saltarLaDobleAutentificacion();
     await testPlan.registrarMatriz(TEST.NEGATIVO, INICIO.NEGATIVO);
 })
 
@@ -28,6 +30,7 @@ test('excepcion', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
     await basePage.iniciarSesison(TEST.EXCEPCION);
+    await basePage.saltarLaDobleAutentificacion();
     await testPlan.registrarMatriz(TEST.EXCEPCION, INICIO.EXCEPCION);
 })
 
@@ -37,5 +40,6 @@ test('noAfectacion', async ({page}) => {
     const basePage = new BasePage(page);
     const testPlan = new TestPlan(page) 
     await basePage.iniciarSesison(TEST.AFECTACION);
+    await basePage.saltarLaDobleAutentificacion();
     await testPlan.registrarMatriz(TEST.AFECTACION, INICIO.AFECTACION);
 })
