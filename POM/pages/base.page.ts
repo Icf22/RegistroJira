@@ -30,6 +30,7 @@ export class BasePage{
     await this.btnContinue.click();
     await this.txtPassword.fill(CREDENTIALS.PASSWORD)
     await this.btnLogIn.click();
+    await this.page.pause();
     return testCase;
   }
 

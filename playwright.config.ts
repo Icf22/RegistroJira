@@ -29,7 +29,7 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     actionTimeout: 300000,
-    headless: true,
+    headless: false,
     trace: "retain-on-failure",
     screenshot: "off",
     video: "on"
